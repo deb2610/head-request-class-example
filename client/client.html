@@ -9,13 +9,48 @@
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content');
       
+      switch(xhr.status){
+        case 200:
+          content.innerHTML = '<b>Success</b>'
+        case 201:
+          content.innerHTML = '<b>Created</b>'
+        case 400:
+          content.innerHTML = '<b>Bad Request</b>'
+        case 404:
+          content.innerHTML = '<b>Not Foound</b>'
+        default:
+          content.innerHTML = '<b>Not Implemented</b>'
+      }
+      if(parseResponse){
+        const obj = JSON.parse(xhr.response);
+
+        content.innerHTML += `<p>${xhr.response}</p>`;
+      }
+      else{
+        content.innerHTML += `<p>meta Recived</p>`;
+      }
     };
 
     const requestUpdate = (e, userForm) => {
       const url = userForm.querySelector('#urlField').value;
       const method = userForm.querySelector('#methodSelect').value;
-      
 
+      e.preventDefault();
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open(method,url);
+
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      if(method === 'GET'){
+        xhr.onload = () => handleResponse(xhr, true);
+      }
+      if(method === 'GET'){
+        xhr.onload = () => handleResponse(xhr, false);
+      }
+      xhr.send();
+
+      return false;
     };
 
 
